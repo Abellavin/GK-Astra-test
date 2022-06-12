@@ -1,0 +1,3 @@
+virtualbox_version: "6.1"
+virtualbox_ext_pack_version: "6.1.34"
+virtualbox_repo_base_url: "[arch=amd64] https://download.virtualbox.org/virtualbox"

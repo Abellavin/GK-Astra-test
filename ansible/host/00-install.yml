@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  user: root
+  connection: local
+
+  pre_tasks:
+    - name: обновление списка пакетов
+      apt:
+        update_cache: true
+        force_apt_get: true
+
+  roles:
+    # Установка пакетов
+    - install
