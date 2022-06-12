@@ -1,0 +1,46 @@
+- name: установка пакетoв
+  apt:
+    force_apt_get: true
+    state: latest
+    force: yes
+    name:
+      - 'apt-transport-https'
+      - 'ca-certificates'
+      - 'curl'
+      - 'software-properties-common'
+      - 'python3-pip'
+      - 'virtualenv'
+      - 'python3-setuptools'
+      - 'python3-apt'
+      - 'python3-docker'
+
+- name: Adding Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Adding Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+
+- name: установка пакетoв
+  apt:
+    force_apt_get: true
+    state: latest
+    force: yes
+    name:
+      - 'docker-ce'
+
+- name: pull an image
+  docker_image:
+    name: zabbix/zabbix-appliance:ubuntu-4.0-latest
+    source: pull
+
+- name: Start a container
+  docker_container:
+    name: zabbix
+    image: zabbix/zabbix-appliance:ubuntu-4.0-latest
+    state: started
+    ports:
+     - "80:80"

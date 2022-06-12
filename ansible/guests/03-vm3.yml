@@ -1,0 +1,12 @@
+- name: Docker install
+  hosts: vm3
+
+  pre_tasks:
+    - name: обновление списка пакетов
+      apt:
+        update_cache: true
+        force_apt_get: true
+
+  roles:
+    # Установка пакетов
+    - docker
