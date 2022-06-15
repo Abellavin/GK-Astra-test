@@ -1,0 +1,38 @@
+- name: freeipa-server install
+  hosts: vm1
+  become: true
+
+  pre_tasks:
+    - name: Удаление записи 127.0.0.1 из файла hosts
+      lineinfile:
+        path: /etc/hosts
+        state: absent
+        regexp: '^127\.0\.0\.1\s+'
+
+    - name: Редактирование файла hosts
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ item }}" 
+      with_items:
+          - '192.168.63.10 vm1.test.local'
+          - '192.168.63.11 vm2.test.local'
+
+  roles:
+    # Установка пакетов
+    - ipaserver
+
+
+  post_tasks:
+    - name: Create users in freeipa
+      ipa_user:
+         givenname: "{{ item }}"
+         sn: "{{ item }}"
+         name: "{{ item }}"
+         state: present
+         ipa_host: vm1.test.local
+         ipa_user: admin
+         ipa_pass: "{{ ipaadmin_password }}"
+      with_items:
+          - 'user1'
+          - 'user2'

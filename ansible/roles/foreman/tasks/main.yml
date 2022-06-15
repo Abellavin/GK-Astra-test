@@ -1,0 +1,54 @@
+---
+- name: "Update CA Certificates"
+  apt:
+    name: ca-certificates
+    update_cache: yes
+
+- name: "Install Puppet Repository"
+  apt:
+    deb: https://apt.puppetlabs.com/{{ puppet_version }}-release-{{ ansible_distribution_release }}.deb
+
+- name: "Install Foreman Repository"
+  block:
+    - name: "Add Public Key"
+      apt_key:
+        url: https://deb.theforeman.org/pubkey.gpg
+        state: present
+    - name: "Install Foreman Repo"
+      apt_repository:
+        repo: deb http://deb.theforeman.org/ {{ ansible_distribution_release }} {{ foreman_version }}
+        state: present
+        filename: /etc/apt/sources.list.d/foreman.list
+    - name: "Install Foreman Plugin Repo"
+      apt_repository:
+        repo: deb http://deb.theforeman.org/ plugins {{ foreman_version }}
+        state: present
+        filename: /etc/apt/sources.list.d/foreman_plugins.list
+
+- name: "Download Foreman installer package"
+  apt:
+    name: foreman-installer
+    force: yes
+    update_cache: yes
+
+- name: "Install Puppet Agent"
+  apt: name=puppet-agent force=yes update_cache=yes
+
+- name: Копирование scenarios
+  copy:
+    src: files/
+    dest: /etc/foreman-installer/scenarios.d/
+    mode: 0644
+    owner: root
+    group: root
+
+
+- name: Install and Configure Foreman without Puppet
+  block:
+    - name: "Install Foreman without Puppet"
+      command: >
+        foreman-installer -S foreman
+        --foreman-unattended=true
+        --foreman-initial-admin-password={{ foreman_admin_password }}
+        {{ foreman_cmd_options | join (' ') }}
+

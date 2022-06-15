@@ -1,0 +1,35 @@
+- name: freeipa-client install
+  hosts: vm2
+  become: true
+
+  pre_tasks:
+    - name: Удаление записи 127.0.1.1 из файла hosts
+      lineinfile:
+        path: /etc/hosts
+        state: absent
+        regexp: '^127\.0\.1\.1\s+'
+
+    - name: Редактирование файла hosts
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ item }}" 
+      with_items:
+          - '192.168.63.10 vm1.test.local'
+          - '192.168.63.11 vm2.test.local'
+    
+    - name: установка пакетoв
+      apt:
+       force_apt_get: true
+       state: latest
+       force: yes
+       name:
+         - 'python2.7'
+
+
+  roles:
+    # Установка пакетов
+    - ipaclient
+    - foreman
+
+

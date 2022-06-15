@@ -1,0 +1,10 @@
+ipaadmin_password: qwerty12
+ipadm_password: qwerty12
+ipaserver_domain: test.local
+ipaserver_realm: TEST.LOCAL
+ipaserver_setup_dns: yes
+ipaserver_auto_forwarders: yes
+ipaserver_setup_firewalld: no
+ipaserver_ip_addresses: 192.168.63.10
+ipaserver_forwarders: 77.88.8.8
+ipaclient_servers: vm1.test.local
